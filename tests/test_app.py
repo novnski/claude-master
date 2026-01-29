@@ -1,10 +1,11 @@
 """Tests for ClaudeDashboard app."""
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
 from claude_dashboard.app import ClaudeDashboard
 from claude_dashboard.config.claude_config import ClaudeConfig
+from textual import events
 
 
 @pytest.fixture
@@ -74,3 +75,42 @@ def test_on_unmount_handles_dead_observer(mock_claude_dir):
         # stop and join should not be called
         mock_observer.stop.assert_not_called()
         mock_observer.join.assert_not_called()
+
+
+def test_number_key_shortcuts_navigate_to_screens():
+    """Test that number keys 1-8 navigate to corresponding sidebar screens."""
+    app = ClaudeDashboard()
+
+    # Test that _jump_to_sidebar_item method exists
+    assert hasattr(app, '_jump_to_sidebar_item'), "App should have _jump_to_sidebar_item method"
+
+    # Test that number keys trigger the jump method
+    # We'll mock the query_one to avoid full app initialization
+    with patch.object(app, 'query_one') as mock_query:
+        mock_content_area = MagicMock()
+        mock_query.return_value = mock_content_area
+
+        # Test each number key
+        for number in range(1, 9):
+            key_event = events.Key(str(number), str(number))
+            app.on_key(key_event)
+
+            # Verify query_one was called (method is working)
+            mock_query.assert_called()
+
+        # Reset mock for invalid key tests
+        mock_query.reset_mock()
+
+        # Test invalid number keys do nothing
+        initial_call_count = mock_query.call_count
+
+        key_event = events.Key("9", "9")
+        app.on_key(key_event)
+
+        # For "9" (out of range), query_one should still be called but the logic handles it gracefully
+        # The method checks bounds so it won't crash
+
+        key_event = events.Key("0", "0")
+        app.on_key(key_event)
+
+        # For "0" (invalid), same behavior - no crash

@@ -133,3 +133,25 @@ class ClaudeDashboard(App):
         elif event.key == "question":
             from claude_dashboard.screens.shortcuts_help import ShortcutsHelpScreen
             self.push_screen(ShortcutsHelpScreen())
+        elif event.key in "12345678":
+            # Number keys jump to sidebar items
+            self._jump_to_sidebar_item(int(event.key))
+
+    def _jump_to_sidebar_item(self, number: int) -> None:
+        """Jump to sidebar item by number.
+
+        Args:
+            number: The number key pressed (1-8)
+        """
+        sidebar_items = [
+            "Agents", "Skills", "Settings", "Sessions",
+            "Analytics", "Updates", "Relationships", "Marketplace"
+        ]
+
+        if 0 <= number - 1 < len(sidebar_items):
+            item = sidebar_items[number - 1]
+            content_area = self.query_one("#content_area", Vertical)
+            content_area.remove_children()
+
+            if item in self.SCREENS:
+                content_area.mount(self.SCREENS[item]())
