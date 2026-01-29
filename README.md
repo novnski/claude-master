@@ -37,23 +37,30 @@ A terminal-based TUI application for managing Claude Code configuration, agents,
 
 ## Installation
 
-### Quick Install (Recommended)
+### One-Line Install (Recommended)
 
-Run the install script directly:
+**Just run this - everything is automatic:**
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/yourusername/claude-master-dashboard/main/install.sh | bash
 ```
 
-Or download and run:
+**That's it!** The script will:
+- ✓ Check Python version (requires 3.10+)
+- ✓ Install all dependencies automatically
+- ✓ Detect your shell (bash, zsh, fish)
+- ✓ Add `claude-dashboard` command to your PATH
+- ✓ Update your shell config automatically
+- ✓ Work in new terminal sessions
 
+**Then just open a new terminal and run:**
 ```bash
-wget https://raw.githubusercontent.com/yourusername/claude-master-dashboard/main/install.sh
-chmod +x install.sh
-./install.sh
+claude-dashboard
 ```
 
 ### Manual Install
+
+If you prefer manual installation:
 
 1. **Clone the repository:**
    ```bash
@@ -70,17 +77,6 @@ chmod +x install.sh
    ```bash
    python -m claude_dashboard
    ```
-
-### Optional: Install as pipx package
-
-```bash
-pipx install .
-```
-
-Then run with:
-```bash
-claude-dashboard
-```
 
 ## Usage
 
