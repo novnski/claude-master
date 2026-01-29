@@ -4,7 +4,6 @@ from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.containers import Vertical
 from textual.widgets import DataTable, Button, Label
-from claude_dashboard.utils.editor import open_editor
 from claude_dashboard.config.claude_config import ClaudeConfig
 
 
@@ -28,7 +27,7 @@ class AgentDetailScreen(ModalScreen):
         yield Label(f"Model: {self.agent_data.get('model', 'N/A')}")
         yield Label(f"\n{self.agent_data.get('description', 'No description')}")
         yield Label(f"\n[b]Content:[/b]\n{self.agent_data.get('content', '')[:500]}")
-        yield Button("Edit (External)", variant="primary")
+        yield Button("Edit", variant="primary")
         yield Button("Close", id="close")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -39,9 +38,11 @@ class AgentDetailScreen(ModalScreen):
             if "path" not in self.agent_data:
                 self.app.notify("No file path available for this agent", severity="error")
                 return
+
+            # Use inline editor instead of external editor
+            from claude_dashboard.screens.editor import EditorScreen
             self.app.pop_screen()
-            self.app.suspend()  # Suspend TUI temporarily
-            open_editor(self.agent_data["path"])
+            self.app.push_screen(EditorScreen(self.agent_data["path"]))
 
 
 class AgentsScreen(Vertical):
