@@ -1,7 +1,12 @@
 """Claude configuration singleton for accessing ~/.claude directory."""
 
+import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
+from textual.message import Message
+
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 from claude_dashboard.utils.frontmatter import parse_frontmatter
 
@@ -54,3 +59,53 @@ class ClaudeConfig:
                     data["path"] = str(skill_file)
                     skills.append(data)
         return skills
+
+    def get_settings(self) -> dict[str, Any]:
+        """Get settings with sensitive values masked."""
+        settings_file = self.claude_dir / "settings.json"
+        if not settings_file.exists():
+            return {}
+
+        with open(settings_file) as f:
+            settings = json.load(f)
+
+        # Mask API keys and tokens
+        if "env" in settings:
+            for key in settings["env"]:
+                if any(word in key.upper() for word in ["KEY", "TOKEN", "SECRET"]):
+                    settings["env"][key] = "••••••••"
+
+        return settings
+
+    def start_watching(self, callback: Callable[[], None]) -> Observer:
+        """Start watching for config changes.
+
+        Args:
+            callback: Function to call when config changes
+
+        Returns:
+            Observer instance that can be stopped later
+        """
+        observer = Observer()
+        handler = ConfigWatcher(callback)
+        observer.schedule(handler, str(self.claude_dir), recursive=True)
+        observer.start()
+        return observer
+
+
+class ConfigChanged(Message):
+    """Emitted when Claude config changes."""
+
+
+class ConfigWatcher(FileSystemEventHandler):
+    """Watches for changes to Claude config files."""
+
+    def __init__(self, callback: Callable[[], None]):
+        super().__init__()
+        self.callback = callback
+
+    def on_modified(self, event):
+        """Handle file modification events."""
+        if event.src_path.endswith(('.md', '.json')):
+            self.callback()
+
