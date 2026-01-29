@@ -77,8 +77,8 @@ class CommandPalette(ModalScreen):
             from claude_dashboard.screens.settings import SettingsScreen
             content_area.mount(SettingsScreen())
         elif command == "Show Keyboard Shortcuts":
-            # Placeholder for now - ShortcutsHelpScreen will be available later
-            self.app.notify("Keyboard shortcuts help coming soon!", severity="info")
+            from claude_dashboard.screens.shortcuts_help import ShortcutsHelpScreen
+            self.app.push_screen(ShortcutsHelpScreen())
 
     def _show_theme_switcher(self):
         """Show theme selection dialog."""

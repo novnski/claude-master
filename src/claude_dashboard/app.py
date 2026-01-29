@@ -127,3 +127,6 @@ class ClaudeDashboard(App):
         if event.key == "ctrl+p":
             from claude_dashboard.widgets.command_palette import CommandPalette
             self.push_screen(CommandPalette())
+        elif event.key == "question":
+            from claude_dashboard.screens.shortcuts_help import ShortcutsHelpScreen
+            self.push_screen(ShortcutsHelpScreen())
