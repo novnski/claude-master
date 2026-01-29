@@ -60,7 +60,11 @@ class EditorScreen(Screen):
     def _read_file(self) -> str:
         """Read file content."""
         if self.file_path.exists():
-            return self.file_path.read_text()
+            try:
+                return self.file_path.read_text(encoding="utf-8")
+            except (PermissionError, OSError) as e:
+                self.app.notify(f"Error reading file: {e}", severity="error")
+                return ""
         return ""
 
     def compose(self) -> ComposeResult:
@@ -80,13 +84,9 @@ class EditorScreen(Screen):
         line_count = text_area.text.count("\n") + 1
         line_numbers.set_line_count(line_count)
 
-        # Watch for text changes to update line numbers
-        self.watch_text_area(text_area)
-
-    def watch_text_area(self, text_area: TextArea):
-        """Set up watching for text changes."""
-        # Use reactive on TextArea to watch changes
-        text_area.text_changed = lambda: self._update_line_numbers()
+    def on_text_area_changed(self) -> None:
+        """Handle text area changes to update line numbers."""
+        self._update_line_numbers()
 
     def _update_line_numbers(self):
         """Update line numbers based on current text."""
@@ -99,8 +99,10 @@ class EditorScreen(Screen):
     def on_key(self, event: events.Key) -> None:
         """Handle keyboard shortcuts."""
         if event.key == "ctrl+s":
+            event.stop()
             self._save_file()
         elif event.key == "ctrl+q" or event.key == "escape":
+            event.stop()
             self.app.pop_screen()
 
     def _save_file(self):
@@ -108,10 +110,13 @@ class EditorScreen(Screen):
         text_area = self.query_one("#editor", TextArea)
         content = text_area.text
 
-        # Ensure parent directory exists
-        self.file_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            # Ensure parent directory exists
+            self.file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Write content
-        self.file_path.write_text(content)
+            # Write content with explicit encoding
+            self.file_path.write_text(content, encoding="utf-8")
 
-        self.app.notify(f"Saved: {self.file_path.name}")
+            self.app.notify(f"Saved: {self.file_path.name}")
+        except (PermissionError, OSError) as e:
+            self.app.notify(f"Error saving file: {e}", severity="error")
