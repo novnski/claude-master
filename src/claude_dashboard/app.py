@@ -13,6 +13,7 @@ from claude_dashboard.screens.skills import SkillsScreen
 from claude_dashboard.screens.settings import SettingsScreen
 from claude_dashboard.screens.sessions import SessionsScreen
 from claude_dashboard.screens.relationships import RelationshipsScreen
+from claude_dashboard.screens.analytics import AnalyticsScreen
 from claude_dashboard.config.claude_config import ClaudeConfig, ConfigChanged
 from claude_dashboard.utils.updater import check_for_update
 
@@ -29,6 +30,7 @@ class ClaudeDashboard(App):
         "Skills": SkillsScreen,
         "Settings": SettingsScreen,
         "Sessions": SessionsScreen,
+        "Analytics": AnalyticsScreen,
         "Relationships": RelationshipsScreen,
     }
 
@@ -63,6 +65,7 @@ class ClaudeDashboard(App):
                 "Skills",
                 "Settings",
                 "Sessions",
+                "Analytics",
                 "Updates",
                 "Relationships",
             )
