@@ -68,3 +68,20 @@ class SkillsScreen(Vertical):
                 table.add_row("", "No matching skills", "")
             else:
                 self._populate_table(filtered)
+
+    def on_data_table_row_selected(self, event):
+        """Handle row selection - open editor."""
+        table = self.query_one("#skills_table", DataTable)
+        row_key = event.row_key
+        cell = table.get_cell(row_key, "ID")
+        skill_id = str(cell)
+
+        config = ClaudeConfig()
+        skills = config.get_skills()
+        skill = next((s for s in skills if s["id"] == skill_id), None)
+
+        if skill and "path" in skill:
+            from claude_dashboard.screens.editor import EditorScreen
+            self.app.push_screen(EditorScreen(skill["path"]))
+        elif skill:
+            self.app.notify(f"No file path for skill: {skill_id}", severity="error")
