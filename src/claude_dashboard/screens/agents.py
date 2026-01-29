@@ -57,6 +57,7 @@ class AgentsScreen(Vertical):
 
     def compose(self):
         yield DataTable()
+        yield Button("Create New Agent", id="create_agent")
 
     def on_mount(self):
         table = self.query_one(DataTable)
@@ -87,3 +88,9 @@ class AgentsScreen(Vertical):
 
         if agent:
             self.app.push_screen(AgentDetailScreen(agent))
+
+    def on_button_pressed(self, event: Button.Pressed):
+        """Handle button press for create agent."""
+        if event.button.id == "create_agent":
+            from claude_dashboard.widgets_modals.create_modal import CreateAgentModal
+            self.app.push_screen(CreateAgentModal())
