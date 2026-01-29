@@ -1,9 +1,4 @@
-from textual.app import App
-from textual.widgets import Static
-
-class ClaudeDashboard(App):
-    def on_mount(self):
-        self.mount(Static("Claude Master Dashboard - Coming Soon"))
+from claude_dashboard.app import ClaudeDashboard
 
 def main():
     app = ClaudeDashboard()
