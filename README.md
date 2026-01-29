@@ -42,7 +42,7 @@ A terminal-based TUI application for managing Claude Code configuration, agents,
 **Just run this - everything is automatic:**
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/yourusername/claude-master-dashboard/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/novnski/claude-master/main/install.sh | bash
 ```
 
 **That's it!** The script will:
@@ -64,8 +64,8 @@ If you prefer manual installation:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/claude-master-dashboard.git
-   cd claude-master-dashboard
+   git clone https://github.com/novnski/claude-master.git
+   cd claude-master
    ```
 
 2. **Install dependencies:**
