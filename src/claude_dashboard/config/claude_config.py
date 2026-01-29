@@ -23,10 +23,17 @@ class ClaudeConfig:
         return cls._instance
 
     def __init__(self, claude_dir: Path | None = None):
+        claude_dir = claude_dir or Path.home() / ".claude"
+
         if self._initialized:
+            if self.claude_dir != claude_dir:
+                raise ValueError(
+                    f"ClaudeConfig already initialized with {self.claude_dir}, "
+                    f"cannot reinitialize with {claude_dir}"
+                )
             return
 
-        self.claude_dir = claude_dir or Path.home() / ".claude"
+        self.claude_dir = claude_dir
         self._initialized = True
 
     def get_agents(self) -> list[dict[str, Any]]:
@@ -37,10 +44,14 @@ class ClaudeConfig:
 
         agents = []
         for file in agents_dir.glob("*.md"):
-            data = parse_frontmatter(file.read_text())
-            data["id"] = file.stem
-            data["path"] = str(file)
-            agents.append(data)
+            try:
+                data = parse_frontmatter(file.read_text())
+                data["id"] = file.stem
+                data["path"] = str(file)
+                agents.append(data)
+            except (OSError, PermissionError, UnicodeDecodeError):
+                # Skip files that can't be read
+                continue
         return agents
 
     def get_skills(self) -> list[dict[str, Any]]:
@@ -54,10 +65,14 @@ class ClaudeConfig:
             if item.is_dir() or item.is_symlink():
                 skill_file = item / "SKILL.md"
                 if skill_file.exists():
-                    data = parse_frontmatter(skill_file.read_text())
-                    data["id"] = item.name
-                    data["path"] = str(skill_file)
-                    skills.append(data)
+                    try:
+                        data = parse_frontmatter(skill_file.read_text())
+                        data["id"] = item.name
+                        data["path"] = str(skill_file)
+                        skills.append(data)
+                    except (OSError, PermissionError, UnicodeDecodeError):
+                        # Skip files that can't be read
+                        continue
         return skills
 
     def get_settings(self) -> dict[str, Any]:
@@ -66,8 +81,11 @@ class ClaudeConfig:
         if not settings_file.exists():
             return {}
 
-        with open(settings_file) as f:
-            settings = json.load(f)
+        try:
+            with open(settings_file) as f:
+                settings = json.load(f)
+        except json.JSONDecodeError as e:
+            return {"error": f"Invalid JSON in settings.json: {e}"}
 
         # Mask API keys and tokens
         if "env" in settings:
