@@ -14,6 +14,7 @@ from claude_dashboard.screens.settings import SettingsScreen
 from claude_dashboard.screens.sessions import SessionsScreen
 from claude_dashboard.screens.relationships import RelationshipsScreen
 from claude_dashboard.screens.analytics import AnalyticsScreen
+from claude_dashboard.screens.marketplace import MarketplaceScreen
 from claude_dashboard.config.claude_config import ClaudeConfig, ConfigChanged
 from claude_dashboard.utils.updater import check_for_update
 
@@ -32,6 +33,7 @@ class ClaudeDashboard(App):
         "Sessions": SessionsScreen,
         "Analytics": AnalyticsScreen,
         "Relationships": RelationshipsScreen,
+        "Marketplace": MarketplaceScreen,
     }
 
     CSS = """
@@ -68,6 +70,7 @@ class ClaudeDashboard(App):
                 "Analytics",
                 "Updates",
                 "Relationships",
+                "Marketplace",
             )
             with Vertical(id="content_area"):
                 yield AgentsScreen()
