@@ -6,7 +6,7 @@ from textual.widgets import Header, Footer
 from textual.messages import Message
 from textual import events
 from pathlib import Path
-from claude_dashboard.widgets import Sidebar
+from claude_dashboard.sidebar import Sidebar
 from claude_dashboard.themes import get_current_theme, get_available_themes, set_theme
 from claude_dashboard.screens.agents import AgentsScreen
 from claude_dashboard.screens.skills import SkillsScreen
@@ -118,3 +118,9 @@ class ClaudeDashboard(App):
 
         if event.item in self.SCREENS:
             content_area.mount(self.SCREENS[event.item]())
+
+    def on_key(self, event: events.Key) -> None:
+        """Handle global keyboard shortcuts."""
+        if event.key == "ctrl+p":
+            from claude_dashboard.widgets.command_palette import CommandPalette
+            self.push_screen(CommandPalette())
