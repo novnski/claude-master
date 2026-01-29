@@ -19,8 +19,12 @@ def get_available_themes() -> Dict[str, str]:
 def get_current_theme() -> str:
     """Get currently configured theme."""
     if STATE_FILE.exists():
-        data = json.loads(STATE_FILE.read_text())
-        return data.get("theme", "default")
+        try:
+            data = json.loads(STATE_FILE.read_text())
+            return data.get("theme", "default")
+        except (json.JSONDecodeError, IOError):
+            # Corrupted state file, return default
+            return "default"
     return "default"
 
 
