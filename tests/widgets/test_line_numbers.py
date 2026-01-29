@@ -79,7 +79,7 @@ def test_line_numbers_handles_many_lines(app_with_line_numbers):
 
 
 @pytest.fixture
-def app_with_line_numbers():
+async def app_with_line_numbers():
     """Create a test app with LineNumbers widget mounted."""
     from claude_dashboard.widgets.line_numbers import LineNumbers
 
