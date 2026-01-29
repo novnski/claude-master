@@ -1,0 +1,24 @@
+/* High contrast for accessibility */
+$panel: #000000;
+$surface: #000000;
+$background: #000000;
+$text: #ffffff;
+$text-dim: #cccccc;
+$primary: #ffff00;
+$secondary: #00ffff;
+$success: #00ff00;
+$warning: #ff00ff;
+
+Screen {
+    background: $panel;
+}
+
+Sidebar {
+    background: $surface;
+    border: solid white;
+}
+
+/* All borders should be high contrast */
+* {
+    border: solid white;
+}

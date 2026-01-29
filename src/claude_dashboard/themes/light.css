@@ -1,0 +1,18 @@
+/* Override base colors for light theme */
+$panel: #ffffff;
+$surface: #f0f0f0;
+$background: #fafafa;
+$text: #333333;
+$text-dim: #666666;
+$primary: #0052cc;
+$secondary: #00b8d4;
+$success: #28a745;
+$warning: #fd7e14;
+
+Screen {
+    background: $panel;
+}
+
+Sidebar {
+    background: $surface;
+}

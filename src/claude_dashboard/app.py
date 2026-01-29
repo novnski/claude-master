@@ -4,7 +4,10 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Header, Footer
 from textual.messages import Message
+from textual import events
+from pathlib import Path
 from claude_dashboard.widgets import Sidebar
+from claude_dashboard.themes import get_current_theme, get_available_themes, set_theme
 from claude_dashboard.screens.agents import AgentsScreen
 from claude_dashboard.screens.skills import SkillsScreen
 from claude_dashboard.screens.settings import SettingsScreen
@@ -38,6 +41,19 @@ class ClaudeDashboard(App):
     }
     """
 
+    def _load_theme(self) -> None:
+        """Load current theme and apply to app."""
+        theme_name = get_current_theme()
+        themes = get_available_themes()
+
+        if theme_name in themes:
+            css_path = Path(themes[theme_name])
+            if css_path.exists():
+                # Read CSS and apply
+                css_content = css_path.read_text()
+                # Combine with existing CSS
+                self.CSS += f"\n\n/* Theme: {theme_name} */\n{css_content}"
+
     def compose(self) -> ComposeResult:
         """Create child widgets."""
         yield Header()
@@ -55,7 +71,9 @@ class ClaudeDashboard(App):
         yield Footer()
 
     def on_mount(self):
-        """Start file watcher and check for updates when app mounts."""
+        """Start file watcher, load theme, and check for updates when app mounts."""
+        self._load_theme()
+
         config = ClaudeConfig()
 
         def on_config_change():

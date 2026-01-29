@@ -1,0 +1,49 @@
+Screen {
+    background: $panel;
+}
+
+Sidebar {
+    background: $surface;
+}
+
+/* Syntax highlighting for editor */
+TextArea.--yaml-key {
+    color: $secondary;
+    text-style: bold;
+}
+
+TextArea.--yaml-value {
+    color: $text;
+}
+
+TextArea.--markdown-header {
+    color: $primary;
+    text-style: bold;
+}
+
+TextArea.--python-keyword {
+    color: $primary;
+    text-style: bold;
+}
+
+TextArea.--python-string {
+    color: $success;
+}
+
+TextArea.--python-comment {
+    color: $text-dim;
+    text-style: italic;
+}
+
+/* Masked secrets display */
+.masked {
+    color: $warning;
+    text-style: bold;
+}
+
+/* Section styling */
+.section {
+    padding: 1;
+    margin-bottom: 1;
+    border: solid $panel;
+}
