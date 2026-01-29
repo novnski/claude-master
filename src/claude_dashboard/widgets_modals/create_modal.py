@@ -7,6 +7,8 @@ from textual.widgets import Label, Input, Button, Select, RadioButton, RadioSet
 from pathlib import Path
 import random
 
+from claude_dashboard.config.claude_config import ConfigChanged
+
 
 class CreateAgentWizard(ModalScreen):
     """3-step wizard for creating new agents."""
@@ -44,6 +46,7 @@ class CreateAgentWizard(ModalScreen):
     def __init__(self):
         super().__init__()
         self.step = 1
+        self.generated_id = f"ag_{random.randint(1000, 9999)}"  # Generate once
         self.data = {
             "name": "",
             "id": "",
@@ -61,7 +64,7 @@ class CreateAgentWizard(ModalScreen):
                 yield Label("Name:")
                 yield Input(placeholder="Agent name", id="agent_name")
                 yield Label("")
-                yield Label(f"ID: (Auto-generated: ag_{random.randint(1000,9999)})")
+                yield Label(f"ID: (Auto-generated: {self.generated_id})")
 
             # Step 2: Model Selection (hidden initially)
             with Vertical(id="step2", classes="step", display="none"):
@@ -102,7 +105,7 @@ class CreateAgentWizard(ModalScreen):
                 self.app.notify("Please enter an agent name", severity="error")
                 return
             self.data["name"] = name_input.value.strip()
-            self.data["id"] = f"ag_{random.randint(1000,9999)}"
+            self.data["id"] = self.generated_id
 
         elif self.step == 2:
             model_set = self.query_one("#model_select", RadioSet)
@@ -154,11 +157,7 @@ class CreateAgentWizard(ModalScreen):
         agents_dir = Path.home() / ".claude" / "agents"
         agents_dir.mkdir(parents=True, exist_ok=True)
 
-        # Check for duplicate
         file_path = agents_dir / f"{self.data['id']}.md"
-        if file_path.exists():
-            self.app.notify(f"Agent '{self.data['id']}' already exists", severity="error")
-            return
 
         # Generate agent file content
         frontmatter = f"""---
@@ -171,13 +170,16 @@ description: >
 You are {self.data['name']}, a Claude AI assistant configured as a {self.data['template']} agent.
 """
 
+        # Use x mode (exclusive creation) - fails if file exists
         try:
-            file_path.write_text(frontmatter)
+            with open(file_path, 'x') as f:
+                f.write(frontmatter)
             self.app.notify(f"Created agent: {self.data['name']} ({self.data['id']})")
             self.app.pop_screen()
 
             # Trigger refresh
-            from claude_dashboard.config.claude_config import ConfigChanged
             self.app.post_message(ConfigChanged())
+        except FileExistsError:
+            self.app.notify(f"Agent '{self.data['id']}' already exists", severity="error")
         except OSError as e:
             self.app.notify(f"Failed to create agent: {e}", severity="error")
