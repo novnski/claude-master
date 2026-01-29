@@ -3,7 +3,7 @@
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.containers import Vertical
-from textual.widgets import DataTable, Button, Label
+from textual.widgets import DataTable, Button, Label, Input
 from claude_dashboard.config.claude_config import ClaudeConfig
 
 
@@ -72,16 +72,24 @@ class AgentsScreen(Vertical):
     """
 
     def compose(self) -> ComposeResult:
-        yield DataTable()
+        yield Input(placeholder="Filter agents...", id="filter_input")
+        yield DataTable(id="agents_table")
         yield Button("Create New Agent", id="create_agent")
 
     def on_mount(self):
-        table = self.query_one(DataTable)
+        table = self.query_one("#agents_table", DataTable)
         table.add_columns("ID", "Name", "Description", "Model")
 
-        # Load agents from config
+        # Load agents from config and store for filtering
         config = ClaudeConfig()
-        agents = config.get_agents()
+        self.agents = config.get_agents()
+
+        self._populate_table(self.agents)
+
+    def _populate_table(self, agents: list):
+        """Populate table with given agents."""
+        table = self.query_one("#agents_table", DataTable)
+        table.clear()
 
         for agent in agents:
             table.add_row(
@@ -93,7 +101,7 @@ class AgentsScreen(Vertical):
 
     def on_data_table_row_selected(self, event):
         """Handle row selection."""
-        table = self.query_one(DataTable)
+        table = self.query_one("#agents_table", DataTable)
         row_key = event.row_key
         cell = table.get_cell(row_key, "ID")
         agent_id = str(cell)
@@ -104,6 +112,20 @@ class AgentsScreen(Vertical):
 
         if agent:
             self.app.push_screen(AgentDetailScreen(agent))
+
+    def on_input_changed(self, event: Input.Changed) -> None:
+        """Filter table based on input."""
+        if event.input.id == "filter_input":
+            search_term = event.value.lower()
+
+            filtered = [
+                agent for agent in self.agents
+                if search_term in agent["id"].lower() or
+                   search_term in agent.get("name", "").lower() or
+                   search_term in agent.get("description", "").lower()
+            ]
+
+            self._populate_table(filtered)
 
     def on_button_pressed(self, event: Button.Pressed):
         """Handle button press for create agent."""
