@@ -42,6 +42,7 @@ class ClaudeDashboard(App):
     }
     Sidebar {
         background: $surface;
+        width: 30;
     }
     """
 
