@@ -25,14 +25,28 @@ class AgentDetailScreen(ModalScreen):
         yield Label(f"[b]{self.agent_data.get('name', self.agent_data['id'])}[/b]")
         yield Label(f"ID: {self.agent_data['id']}")
         yield Label(f"Model: {self.agent_data.get('model', 'N/A')}")
+
+        # Display skills if present
+        skills = self.agent_data.get('skills', [])
+        if skills:
+            yield Label(f"Skills: {', '.join(skills)}")
+        else:
+            yield Label("Skills: None assigned")
+
         yield Label(f"\n{self.agent_data.get('description', 'No description')}")
         yield Label(f"\n[b]Content:[/b]\n{self.agent_data.get('content', '')[:500]}")
+        yield Button("Assign Skills", id="assign_skills", variant="warning")
         yield Button("Edit", variant="primary")
         yield Button("Close", id="close")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "close":
             self.app.pop_screen()
+        elif event.button.id == "assign_skills":
+            from claude_dashboard.widgets_modals.skill_assignment import SkillAssignmentModal
+            enabled_skills = set(self.agent_data.get("skills", []))
+            agent_path = self.agent_data.get("path")
+            self.app.push_screen(SkillAssignmentModal(self.agent_data["id"], enabled_skills, agent_path))
         else:
             # Edit button - validate path first
             if "path" not in self.agent_data:
