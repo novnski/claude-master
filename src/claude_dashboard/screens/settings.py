@@ -1,6 +1,7 @@
 """Settings screen showing Claude configuration with masked secrets."""
 
 import json
+from textual.app import ComposeResult
 from textual.containers import Vertical, Horizontal
 from textual.widgets import Static, Header
 from claude_dashboard.config.claude_config import ClaudeConfig
@@ -23,7 +24,7 @@ class SettingsScreen(Vertical):
     }
     """
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield Header()
         with Vertical(id="settings_container"):
             yield Static(id="settings_display")

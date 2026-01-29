@@ -1,5 +1,6 @@
 """Create Agent Modal for creating new agents."""
 
+from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Input, Button, Label
 from textual.containers import Vertical
@@ -17,7 +18,7 @@ class CreateAgentModal(ModalScreen):
     }
     """
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield Label("Create New Agent")
         yield Input(placeholder="Agent ID", id="agent_id")
         yield Input(placeholder="Name", id="agent_name")

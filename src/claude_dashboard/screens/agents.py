@@ -1,5 +1,6 @@
 """Agents screen showing list of agents from ~/.claude/agents/."""
 
+from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.containers import Vertical
 from textual.widgets import DataTable, Button, Label
@@ -21,7 +22,7 @@ class AgentDetailScreen(ModalScreen):
         super().__init__()
         self.agent_data = agent_data
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield Label(f"[b]{self.agent_data.get('name', self.agent_data['id'])}[/b]")
         yield Label(f"ID: {self.agent_data['id']}")
         yield Label(f"Model: {self.agent_data.get('model', 'N/A')}")
@@ -39,7 +40,7 @@ class AgentDetailScreen(ModalScreen):
                 self.app.notify("No file path available for this agent", severity="error")
                 return
             self.app.pop_screen()
-            self.app.exit()  # Exit TUI temporarily
+            self.app.suspend()  # Suspend TUI temporarily
             open_editor(self.agent_data["path"])
 
 
@@ -55,7 +56,7 @@ class AgentsScreen(Vertical):
     }
     """
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield DataTable()
         yield Button("Create New Agent", id="create_agent")
 

@@ -1,5 +1,6 @@
 """Relationships screen showing agent-skill relationships."""
 
+from textual.app import ComposeResult
 from textual.containers import Vertical
 from textual.widgets import Tree
 from claude_dashboard.config.claude_config import ClaudeConfig
@@ -17,7 +18,7 @@ class RelationshipsScreen(Vertical):
     }
     """
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield Tree("Agents")
 
     def on_mount(self):

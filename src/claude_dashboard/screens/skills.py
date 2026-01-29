@@ -1,5 +1,6 @@
 """Skills screen showing list of skills from ~/.claude/skills/."""
 
+from textual.app import ComposeResult
 from textual.containers import Vertical
 from textual.widgets import DataTable, Label
 from claude_dashboard.config.claude_config import ClaudeConfig
@@ -17,7 +18,7 @@ class SkillsScreen(Vertical):
     }
     """
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield DataTable()
 
     def on_mount(self):

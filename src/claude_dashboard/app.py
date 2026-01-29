@@ -21,6 +21,14 @@ class UpdateAvailable(Message):
 class ClaudeDashboard(App):
     """Main Claude Dashboard application."""
 
+    SCREENS = {
+        "Agents": AgentsScreen,
+        "Skills": SkillsScreen,
+        "Settings": SettingsScreen,
+        "Sessions": SessionsScreen,
+        "Relationships": RelationshipsScreen,
+    }
+
     CSS = """
     Screen {
         background: $panel;
@@ -60,6 +68,12 @@ class ClaudeDashboard(App):
         if update_status:
             self.query_one(Footer).update(update_status)
 
+    def on_unmount(self) -> None:
+        """Clean up observer when app unmounts."""
+        if hasattr(self, '_observer') and self._observer.is_alive():
+            self._observer.stop()
+            self._observer.join(timeout=5.0)
+
     def on_config_changed(self, event: ConfigChanged) -> None:
         """Refresh current screen when config changes."""
         content_area = self.query_one("#content_area", Vertical)
@@ -76,29 +90,13 @@ class ClaudeDashboard(App):
         content_area = self.query_one("#content_area", Vertical)
         content_area.remove_children()
 
-        screens = {
-            "Agents": AgentsScreen,
-            "Skills": SkillsScreen,
-            "Settings": SettingsScreen,
-            "Sessions": SessionsScreen,
-            "Relationships": RelationshipsScreen,
-        }
-
-        if event.item in screens:
-            content_area.mount(screens[event.item]())
+        if event.item in self.SCREENS:
+            content_area.mount(self.SCREENS[event.item]())
 
     def on_sidebar_selected(self, event: Sidebar.Selected) -> None:
         """Handle sidebar item selection."""
         content_area = self.query_one("#content_area", Vertical)
         content_area.remove_children()
 
-        screens = {
-            "Agents": AgentsScreen,
-            "Skills": SkillsScreen,
-            "Settings": SettingsScreen,
-            "Sessions": SessionsScreen,
-            "Relationships": RelationshipsScreen,
-        }
-
-        if event.item in screens:
-            content_area.mount(screens[event.item]())
+        if event.item in self.SCREENS:
+            content_area.mount(self.SCREENS[event.item]())

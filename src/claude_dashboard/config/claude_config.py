@@ -1,5 +1,6 @@
 """Claude configuration singleton for accessing ~/.claude directory."""
 
+import copy
 import json
 from pathlib import Path
 from typing import Any, Callable
@@ -86,6 +87,9 @@ class ClaudeConfig:
                 settings = json.load(f)
         except json.JSONDecodeError as e:
             return {"error": f"Invalid JSON in settings.json: {e}"}
+
+        # Create a copy before masking to avoid modifying original
+        settings = copy.copy(settings)  # Shallow copy is enough for masking
 
         # Mask API keys and tokens
         if "env" in settings:

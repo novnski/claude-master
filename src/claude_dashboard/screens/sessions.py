@@ -1,5 +1,6 @@
 """Sessions screen showing active/recent sessions."""
 
+from textual.app import ComposeResult
 from textual.containers import Vertical
 from textual.widgets import DataTable
 
@@ -16,7 +17,7 @@ class SessionsScreen(Vertical):
     }
     """
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield DataTable()
 
     def on_mount(self):
