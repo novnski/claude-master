@@ -108,5 +108,5 @@ class AgentsScreen(Vertical):
     def on_button_pressed(self, event: Button.Pressed):
         """Handle button press for create agent."""
         if event.button.id == "create_agent":
-            from claude_dashboard.widgets_modals.create_modal import CreateAgentModal
-            self.app.push_screen(CreateAgentModal())
+            from claude_dashboard.widgets_modals.create_modal import CreateAgentWizard
+            self.app.push_screen(CreateAgentWizard())
