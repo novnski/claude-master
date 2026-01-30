@@ -6,11 +6,10 @@ from textual.containers import Horizontal, Vertical
 from textual.widgets import Footer, Label
 from textual.message import Message
 from textual import events
-from textual.widget import Widget
-from textual.reactive import reactive
 from pathlib import Path
 from claude_dashboard.sidebar import Sidebar
 from claude_dashboard.themes import get_current_theme, get_available_themes, set_theme
+from claude_dashboard.widgets.custom_header import CustomHeader
 from claude_dashboard.screens.agents import AgentsScreen
 from claude_dashboard.screens.skills import SkillsScreen
 from claude_dashboard.screens.settings import SettingsScreen
@@ -20,44 +19,6 @@ from claude_dashboard.screens.analytics import AnalyticsScreen
 from claude_dashboard.screens.github_import import GitHubImportScreen
 from claude_dashboard.config.claude_config import ClaudeConfig, ConfigChanged
 from claude_dashboard.utils.updater import check_for_update
-
-
-class CustomHeader(Widget):
-    """Simple header widget that displays title and subtitle."""
-
-    DEFAULT_CSS = """
-    CustomHeader {
-        height: 1;
-        dock: top;
-        background: $panel;
-        padding: 0 1;
-    }
-    CustomHeader > Label {
-        width: 100%;
-        text-align: center;
-        content-align: center middle;
-    }
-    """
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._label: Label | None = None
-
-    def compose(self) -> ComposeResult:
-        yield Label("")
-
-    def on_mount(self) -> None:
-        """Get reference to label."""
-        self._label = self.query_one(Label)
-
-    def set_title(self, title: str, subtitle: str = "") -> None:
-        """Set the header title."""
-        if subtitle:
-            text = f"{title} — {subtitle}"
-        else:
-            text = title
-        if self._label:
-            self._label.update(text)
 
 
 class UpdateAvailable(Message):

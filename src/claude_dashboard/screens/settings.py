@@ -2,8 +2,9 @@
 
 from textual.app import ComposeResult
 from textual.containers import Vertical, Horizontal
-from textual.widgets import Static, Header, Button, Label
+from textual.widgets import Static, Button, Label
 from textual.screen import Screen
+from claude_dashboard.widgets.custom_header import CustomHeader
 from claude_dashboard.config.claude_config import ClaudeConfig
 from pathlib import Path
 
@@ -32,7 +33,7 @@ class SettingsScreen(Vertical):
     """
 
     def compose(self) -> ComposeResult:
-        yield Header()
+        yield CustomHeader()
         with Vertical(id="settings_container"):
             # Core Configuration
             yield Static("[b]# CORE CONFIGURATION[/b]", classes="section")

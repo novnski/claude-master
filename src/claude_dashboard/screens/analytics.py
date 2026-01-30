@@ -2,7 +2,8 @@
 
 from textual.app import ComposeResult
 from textual.containers import Vertical
-from textual.widgets import Label, Header
+from textual.widgets import Label
+from claude_dashboard.widgets.custom_header import CustomHeader
 from claude_dashboard.utils.usage_tracker import UsageTracker
 
 
@@ -24,7 +25,7 @@ class AnalyticsScreen(Vertical):
     """
 
     def compose(self) -> ComposeResult:
-        yield Header()
+        yield CustomHeader()
         with Vertical(id="chart_container"):
             yield Label("", id="total_cost")
             yield Label("", id="daily_chart")

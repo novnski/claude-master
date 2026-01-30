@@ -2,7 +2,8 @@
 
 from textual.app import ComposeResult
 from textual.containers import Vertical, Horizontal
-from textual.widgets import Tree, Header, Button, Label
+from textual.widgets import Tree, Button, Label
+from claude_dashboard.widgets.custom_header import CustomHeader
 from claude_dashboard.config.claude_config import ClaudeConfig
 
 
@@ -23,7 +24,7 @@ class RelationshipsScreen(Vertical):
     """
 
     def compose(self) -> ComposeResult:
-        yield Header()
+        yield CustomHeader()
         yield Label("[b]VISUAL HIERARCHY[/b]")
         with Vertical(id="tree_container"):
             yield Tree("root (User)", id="agent_tree")

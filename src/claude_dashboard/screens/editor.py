@@ -3,10 +3,11 @@
 from textual.app import ComposeResult
 from textual.screen import Screen
 from textual.containers import Horizontal
-from textual.widgets import Header, Footer, TextArea, Label
+from textual.widgets import Footer, TextArea, Label
 from textual import events
 from pathlib import Path
 
+from claude_dashboard.widgets.custom_header import CustomHeader
 from claude_dashboard.widgets.line_numbers import LineNumbers
 
 
@@ -83,7 +84,7 @@ class EditorScreen(Screen):
             return ""
 
     def compose(self) -> ComposeResult:
-        yield Header()
+        yield CustomHeader()
         yield Label(
             f"Editing: {self.file_path}  [{self.language.upper()}]", id="editor_header"
         )
