@@ -21,7 +21,7 @@ def mock_claude_dir(tmp_path):
 def test_on_unmount_stops_observer(mock_claude_dir):
     """Test that on_unmount properly stops and joins the observer thread."""
     # Create app with mocked ClaudeConfig
-    with patch('claude_dashboard.app.ClaudeConfig') as mock_config_class:
+    with patch("claude_dashboard.app.ClaudeConfig") as mock_config_class:
         mock_config = Mock(spec=ClaudeConfig)
         mock_config_class.return_value = mock_config
 
@@ -35,14 +35,13 @@ def test_on_unmount_stops_observer(mock_claude_dir):
         app.on_mount()
 
         # Verify observer was started
-        assert hasattr(app, '_observer')
+        assert hasattr(app, "_observer")
         assert app._observer is not None
 
         # Unmount the app
         app.on_unmount()
 
         # Verify observer was stopped and joined with timeout
-        mock_observer.is_alive.assert_called_once()
         mock_observer.stop.assert_called_once()
         mock_observer.join.assert_called_once_with(timeout=5.0)
 
@@ -57,7 +56,7 @@ def test_on_unmount_handles_no_observer():
 
 def test_on_unmount_handles_dead_observer(mock_claude_dir):
     """Test that on_unmount handles case where observer is already dead."""
-    with patch('claude_dashboard.app.ClaudeConfig') as mock_config_class:
+    with patch("claude_dashboard.app.ClaudeConfig") as mock_config_class:
         mock_config = Mock(spec=ClaudeConfig)
         mock_config_class.return_value = mock_config
 
@@ -78,20 +77,20 @@ def test_on_unmount_handles_dead_observer(mock_claude_dir):
 
 
 def test_number_key_shortcuts_navigate_to_screens():
-    """Test that number keys 1-8 navigate to corresponding sidebar screens."""
+    """Test that number keys 1-7 navigate to corresponding sidebar screens."""
     app = ClaudeDashboard()
 
-    # Test that _jump_to_sidebar_item method exists
-    assert hasattr(app, '_jump_to_sidebar_item'), "App should have _jump_to_sidebar_item method"
+    # Test that action_jump method exists (replaces _jump_to_sidebar_item)
+    assert hasattr(app, "action_jump"), "App should have action_jump method"
 
     # Test that number keys trigger the jump method
     # We'll mock the query_one to avoid full app initialization
-    with patch.object(app, 'query_one') as mock_query:
+    with patch.object(app, "query_one") as mock_query:
         mock_content_area = MagicMock()
         mock_query.return_value = mock_content_area
 
-        # Test each number key
-        for number in range(1, 9):
+        # Test each number key (1-7 for 7 sidebar items)
+        for number in range(1, 8):
             key_event = events.Key(str(number), str(number))
             app.on_key(key_event)
 

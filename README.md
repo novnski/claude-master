@@ -78,6 +78,34 @@ If you prefer manual installation:
    python -m claude_dashboard
    ```
 
+## Uninstallation
+
+To uninstall Claude Dashboard, run:
+
+```bash
+claude-dashboard --uninstall
+```
+
+This will automatically detect your installation method and remove the app appropriately:
+
+- **pipx installation:** Runs `pipx uninstall claude-dashboard`
+- **pip installation:** Runs `pip uninstall claude-dashboard`
+- **Standalone script:** Deletes the script file
+- **Development/source:** Shows you the directory to manually delete
+
+You can also manually uninstall depending on your installation method:
+
+```bash
+# If installed via pipx
+pipx uninstall claude-dashboard
+
+# If installed via pip
+pip uninstall claude-dashboard
+
+# If using standalone script
+rm claude-dashboard.py
+```
+
 ## Usage
 
 ### Keyboard Shortcuts

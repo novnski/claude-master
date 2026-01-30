@@ -100,5 +100,24 @@ def extract_and_run():
             shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+def handle_uninstall():
+    """Handle uninstall for standalone launcher."""
+    script_path = Path(__file__).resolve()
+    print("Uninstalling Claude Dashboard standalone script...")
+    print(f"Removing: {script_path}")
+
+    try:
+        script_path.unlink()
+        print("Uninstalled successfully!")
+    except Exception as e:
+        print(f"Could not remove script automatically: {e}")
+        print(f"Please manually delete: {script_path}")
+
+
 if __name__ == '__main__':
+    # Check for uninstall flag before extracting anything
+    if '--uninstall' in sys.argv:
+        handle_uninstall()
+        sys.exit(0)
+
     extract_and_run()
