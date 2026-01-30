@@ -3,9 +3,11 @@
 import asyncio
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
-from textual.widgets import Header, Footer, Label
+from textual.widgets import Footer, Label
 from textual.message import Message
 from textual import events
+from textual.widget import Widget
+from textual.reactive import reactive
 from pathlib import Path
 from claude_dashboard.sidebar import Sidebar
 from claude_dashboard.themes import get_current_theme, get_available_themes, set_theme
@@ -20,12 +22,53 @@ from claude_dashboard.config.claude_config import ClaudeConfig, ConfigChanged
 from claude_dashboard.utils.updater import check_for_update
 
 
+class CustomHeader(Widget):
+    """Simple header widget that displays title and subtitle."""
+
+    DEFAULT_CSS = """
+    CustomHeader {
+        height: 1;
+        dock: top;
+        background: $panel;
+        padding: 0 1;
+    }
+    CustomHeader > Label {
+        width: 100%;
+        text-align: center;
+        content-align: center middle;
+    }
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._label: Label | None = None
+
+    def compose(self) -> ComposeResult:
+        yield Label("")
+
+    def on_mount(self) -> None:
+        """Get reference to label."""
+        self._label = self.query_one(Label)
+
+    def set_title(self, title: str, subtitle: str = "") -> None:
+        """Set the header title."""
+        if subtitle:
+            text = f"{title} — {subtitle}"
+        else:
+            text = title
+        if self._label:
+            self._label.update(text)
+
+
 class UpdateAvailable(Message):
     """Emitted when an update is available."""
 
 
 class ClaudeDashboard(App):
     """Main Claude Dashboard application."""
+
+    TITLE = "Claude Dashboard"
+    SUB_TITLE = "Agent & Skill Manager"
 
     SCREENS = {
         "Agents": AgentsScreen,
@@ -82,7 +125,7 @@ class ClaudeDashboard(App):
 
     def compose(self) -> ComposeResult:
         """Create child widgets."""
-        yield Header()
+        yield CustomHeader()
         with Horizontal():
             yield Sidebar(
                 "Agents",
@@ -100,6 +143,13 @@ class ClaudeDashboard(App):
     def on_mount(self):
         """Start file watcher, load theme, and check for updates when app mounts."""
         self._load_theme()
+
+        # Set the custom header title
+        try:
+            header = self.query_one(CustomHeader)
+            header.set_title(self.TITLE, self.SUB_TITLE)
+        except Exception:
+            pass
 
         # Initialize config singleton
         self._config = ClaudeConfig()
